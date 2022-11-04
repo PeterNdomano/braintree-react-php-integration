@@ -17,6 +17,21 @@ function App() {
     //this handles and submits payment to the server
     if(dropInReady && !loading) {//limit execution only when dropin is shown and there's no loading
 
+      setLoading(true);
+      braintree.requestPaymentMethod(async (error, payload) => {
+        if(error) {
+          setError(error.message);
+          setLoading(false);
+        }
+        else {
+          //all is good so far, get the nonce
+          let nonce = payload.nonce;
+          console.log(nonce);
+
+          // TODO: Call Server side here to finish payment
+
+        }
+      })
     } else {
       setError('Please wait....')
     }
@@ -80,6 +95,10 @@ function App() {
               {(!dropInReady || loading) ? "Please wait...." : "Pay Now" }
             </button>
           }
+
+          <div style={{ marginTop:"20px" }} className="text-danger text-left">
+            {error}
+          </div>
         </div>
 
       </div>
