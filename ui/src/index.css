@@ -3,3 +3,13 @@ html {
   width: 100%;
   margin: 0;
 }
+
+.btn-pay {
+  height: 100px;
+  font-size: 20px;
+  width: 100%;
+}
+
+.heading {
+  font-size: 50px;
+}
