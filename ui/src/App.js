@@ -11,47 +11,55 @@ function App() {
 
   const triggerPayment = () => {
     //this triggers dropin to show
+    setError(''); //resets error msg
     setShowDropIn(true);
   }
 
   const processPayment = () => {
     //this handles and submits payment to the server
+    setError(''); //resets error msg
     if(dropInReady && !loading) {//limit execution only when dropin is shown and there's no loading
 
       setLoading(true);
       braintree.requestPaymentMethod(async (error, payload) => {
         if(error) {
           setError(error.message);
-          setLoading(false);
+          setLoading(false); //disale loading
+          setShowDropIn(false); //hide dropin
         }
         else {
           //all is good so far, get the nonce
           let nonce = payload.nonce;
-          console.log(nonce);
+          let formData = new FormData();
+          formData.append('nonce', nonce);
+          formData.append('amount', '25.00');
+          formData.append('data', JSON.stringify({
+            productName: 'Test product',
+            productPrice: '25.00 USD',
+          }));
 
           //Call Server side here to finish payment
           let API_URL = "github_projects/braintree-react-php-integration/api/process_payment.php";
           fetch(API_URL, {
             method: "POST",
-            body: {
-              nonce,
-              amount: "25.00",
-              data: JSON.stringify({
-                productName: "Test Product",
-                productPrice: "25 USD",
-              })
-            }
+            body: formData,
           })
-          .then(response => response.json())
+          .then(response => response.text())
           .then(response => {
             setLoading(false); //disable loading
             setShowDropIn(false); //hide dropin
 
+            console.log(response);
+            response = JSON.parse(response);
             if(response.status === 1) {
               setMessage("Payment was successful")
             } else {
               setError(response.msg);
             }
+          })
+          .catch(err => {
+            setError(err.message);
+            setLoading(false); //disable loading
           })
 
         }
@@ -107,8 +115,14 @@ function App() {
         </div>
 
         <div className="col-md-6 p-4">
-          <div style={{ width: "100%" }} id="braintreeView">
-          </div>
+
+
+          {
+            (showDropIn) ?
+            <div style={{ width: "100%" }} id="braintreeView">
+            </div>
+            :""
+          }
 
           {
             (!showDropIn) ?

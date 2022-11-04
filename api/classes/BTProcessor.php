@@ -2,7 +2,7 @@
 
 require_once dirname(__FILE__).'/../braintree/lib/Braintree.php';
 
-class Licence {
+class BTProcessor {
 
   function __construct() {
     $this->gateway = new Braintree\Gateway([

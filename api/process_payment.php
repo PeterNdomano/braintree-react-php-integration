@@ -1,7 +1,5 @@
 <?php
-
 require_once dirname(__FILE__).'/classes/BTProcessor.php';
-
 
 if($_SERVER['REQUEST_METHOD'] == 'POST') {
   if(isset($_POST['amount']) && isset($_POST['nonce']) && isset($_POST['data'])) {
@@ -17,7 +15,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
   else {
     echo json_encode(array(
       'status' => 0,
-      'msg' => 'Invalid request',
+      'msg' => 'Invalid request '.$_POST['amount'].' '.$_POST['data'].' '.$_POST['nonce'],
     ));
   }
 }
