@@ -1,5 +1,6 @@
 <?php
 
+require_once dirname(__FILE__).'/../braintree/lib/Braintree.php';
 
 class Licence {
 
@@ -13,7 +14,7 @@ class Licence {
   }
 
   public function createTransaction($nonce, $amount, $data) {
-    $ffo = array(
+    $output = array(
       'status' => 0,
       'msg' => 'Payment process terminated prematurely',
     );
@@ -27,23 +28,23 @@ class Licence {
 
     if($result->success) {
       // TODO: Store transaction data in the database table
-      $ffo = array(
+      $output = array(
         'status' => 1,
         'msg' => 'Payment successful',
       );
     } else if($result->transaction) {
-      $ffo = array(
+      $output = array(
         'status' => 0,
         'msg' => $result->transaction->processorResponseText,
       );
     } else {
-      $ffo = array(
+      $output = array(
         'status' => 0,
         'msg' => 'Sorry, we could not process your payment',
       );
     }
 
-    return $ffo;
+    return $output;
   }
 }
 
