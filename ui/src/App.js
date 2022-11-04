@@ -3,6 +3,7 @@ import dropin from "braintree-web-drop-in";
 
 function App() {
   const [ error, setError ] = useState('');
+  const [ message, setMessage ] = useState('');
   const [ showDropIn, setShowDropIn ] = useState(false);
   const [ braintree, setBraintree ] = useState(null);
   const [ dropInReady, setDropInReady ] = useState(false);
@@ -28,7 +29,30 @@ function App() {
           let nonce = payload.nonce;
           console.log(nonce);
 
-          // TODO: Call Server side here to finish payment
+          //Call Server side here to finish payment
+          let API_URL = "github_projects/braintree-react-php-integration/api/process_payment.php";
+          fetch(API_URL, {
+            method: "POST",
+            body: {
+              nonce,
+              amount: "25.00",
+              data: JSON.stringify({
+                productName: "Test Product",
+                productPrice: "25 USD",
+              })
+            }
+          })
+          .then(response => response.json())
+          .then(response => {
+            setLoading(false); //disable loading
+            setShowDropIn(false); //hide dropin
+
+            if(response.status === 1) {
+              setMessage("Payment was successful")
+            } else {
+              setError(response.msg);
+            }
+          })
 
         }
       })
@@ -38,6 +62,7 @@ function App() {
   }
 
   const initializeBraintree = () => {
+    setDropInReady(false);
     dropin.create({
       authorization: "sandbox_6mrf6nhg_fknw3nxdc3cqnqy6", //braintree tokeniization
       container: '#braintreeView', //id for the div where dropin will be loaded
@@ -96,9 +121,20 @@ function App() {
             </button>
           }
 
-          <div style={{ marginTop:"20px" }} className="text-danger text-left">
-            {error}
-          </div>
+          {
+            (error) ?
+            <div style={{ marginTop:"20px" }} className="text-danger text-left">
+              {error}
+            </div>: ""
+          }
+
+          {
+            (message) ?
+            <div style={{ marginTop:"20px" }} className="text-success text-left">
+              {message}
+            </div>: ""
+          }
+
         </div>
 
       </div>
