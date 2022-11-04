@@ -127,7 +127,7 @@ function App() {
           {
             (!showDropIn) ?
             <button onClick={() => triggerPayment()} className="btn btn-primary btn-pay">
-              Start Payment
+              Pay With Credit Card
             </button>
             :
             <button onClick={() => processPayment()} className="btn btn-primary btn-pay">
